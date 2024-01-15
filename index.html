@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scuffed</title>
+    <style>
+        /* Style for the display element */
+        .click-display {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            pointer-events: none; /* to make sure the display element doesn't block the click events on other elements */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="card" onclick="handleClick(event)"> 
+            <h1>Eric's Image Editor</h1>
+            <img src="images/deepfried_1705208780231.jpg" id="upload-pic">
+            <label for="input-file">Upload Image</label>
+            <input type="file" accept="image/jpeg, image/png, image/jpg" id="input-file" onchange="handleImageUpload(event)">
+        </div>
+    </div>
+
+    <script>
+        // Variable to keep track of the click count
+        let clickCount = 0;
+
+        let imageUploaded = false;
+
+        // Function to handle the click event
+        function handleClick(event) {
+
+            if (!imageUploaded) {
+                return;
+            }
+            // Increment the click count
+            clickCount++;
+
+            // Calculate the coordinates relative to the card element
+            const boundingRect = event.currentTarget.getBoundingClientRect();
+            const offsetX = event.clientX - boundingRect.left;
+            const offsetY = event.clientY - boundingRect.top;
+
+            // Create a new element for displaying the click count
+            const displayElement = document.createElement('div');
+            displayElement.className = 'click-display';
+            displayElement.style.left = offsetX + 'px';
+            displayElement.style.top = offsetY + 'px';
+            displayElement.textContent = clickCount;
+
+            // Append the element to the card
+            event.currentTarget.appendChild(displayElement);
+        }
+
+        // Function to handle image upload
+        function handleImageUpload(event) {
+            const fileInput = event.target;
+            const uploadPic = document.getElementById('upload-pic');
+
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    uploadPic.src = e.target.result;
+                    imageUploaded = true;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
